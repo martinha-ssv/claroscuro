@@ -1,3 +1,4 @@
+import numpy as np
 from .spaces import hex_to_cielab
 
 def calculate_contrast(color1, color2):

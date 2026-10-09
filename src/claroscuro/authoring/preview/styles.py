@@ -1,9 +1,8 @@
 import matplotlib.pyplot as plt
 import numpy as np
-import Path from pathlib
+from pathlib import Path
 import matplotlib.colors as mcolors
 from matplotlib.patches import Rectangle
-import sys
 
 
 # Fixing random state for reproducibility
@@ -106,9 +105,9 @@ def plot_figure(style_label="", styles: list =None, style_dir=''):
     if styles is None:
         raise ValueError("No style provided")
     
-    styles = [Path(style_dir) / f"{style_label}.mplstyle" for style in styles]
+    styles = [Path(style_dir) / f"{style}.mplstyle" for style in styles]
     plt.style.use(styles)
-    <
+
     # Use a dedicated RandomState instance to draw the same "random" values
     # across the different figures.
     prng = np.random.RandomState(96917002)
@@ -141,8 +140,7 @@ def plot_figure(style_label="", styles: list =None, style_dir=''):
     axs[4].add_artist(rec)
 
 if __name__ == "__main__":
+    from claroscuro.style import STYLE_DIR
 
-    # Plot a demonstration figure for every available style sheet.
-    plot_figure(style_label=style_path.rstrip('.mplstyle'))
-
-plt.show()
+    plot_figure(style_label="base", styles=["base"], style_dir=STYLE_DIR)
+    plt.show()

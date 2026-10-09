@@ -11,6 +11,6 @@ def hex_to_cielab(hex_color):
 def cielab_to_hex(lab_color):
     """Convert CIELAB color space to hex color."""
     rgb = cspace_convert(lab_color, "CIELab", "sRGB1")
-    rgb = np.clip(rgb * 255, 0, 255).astype(int)
+    rgb = np.rint(np.clip(rgb * 255, 0, 255)).astype(int)
     hex_color = '#{:02x}{:02x}{:02x}'.format(rgb[0], rgb[1], rgb[2])
     return hex_color

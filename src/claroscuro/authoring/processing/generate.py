@@ -1,81 +1,49 @@
 import requests
-import json
 import numpy as np
-from .processing import saturation
+from .metrics import saturation
 
-def generate_color_palettes(n_colors=8, contrast=0, bw_contrast=0, n_results=10, temperature=1.2, mode='random'):
+HUEMINT_URL = "https://api.huemint.com/color"
+
+
+def generate_color_palettes(n_colors=8, contrast=0, n_results=10, temperature=1.2, mode='random'):
     """
-    Generate a color palette based on a given base color using an external API.
+    Generate candidate color palettes using the Huemint API.
 
     Args:
-        base_color (str): The base color in hex format (e.g., '#ff5733').
+        n_colors (int): Number of colors per palette.
+        contrast (float): Pairwise contrast constraint sent to the API.
+        n_results (int): Number of palettes to request.
+        temperature (float): Randomness of the generation.
+        mode (str): Huemint generation mode.
 
     Returns:
-        list: A list of colors in the generated palette.
+        list[list[str]]: Palettes (hex colors), each sorted by decreasing saturation.
     """
-    adjacency = _adjancency_matrix(n_colors, contrast, bw_contrast)
+    adjacency = _adjacency_matrix(n_colors, contrast)
 
     json_data = {
         "mode": mode,
         "num_colors": n_colors,
         "temperature": str(temperature),
         "num_results": n_results,
-        "adjacency": adjacency, 
+        "adjacency": adjacency,
         "palette": ["-"] * n_colors,
     }
-    
+
     response = requests.post(
-        "https://api.huemint.com/color",
+        HUEMINT_URL,
         json=json_data,
         headers={"Content-Type": "application/json; charset=utf-8"}
     )
 
     palettes = [sorted(result['palette'], key=saturation, reverse=True) for result in response.json().get('results', [])]
-    
+
     return palettes
 
 
-def _adjancency_matrix(n_colors, contrast, bw_contrast):
-    """
-    Build Huemint adjacency matrix without black & white.
-
-    Indices:
-      0.. = line colors
-    """
+def _adjacency_matrix(n_colors, contrast):
+    """Build the Huemint adjacency matrix: every pair of colors gets the same contrast."""
     A = np.zeros((n_colors, n_colors), dtype=float)
-
-    # line colors <-> line colors
     A[:, :] = contrast
     np.fill_diagonal(A, 0)
-    A = A.flatten().astype(str).tolist()
-
-    return A
-
-# unused function, kept for reference
-def _adjancency_matrix_bw(n_colors, contrast, bw_contrast):
-    """
-    Build Huemint adjacency matrix including black & white
-    as repulsive anchors.
-
-    Indices:
-      0 = white
-      1 = black
-      2.. = line colors
-    """
-    A = np.zeros((n_colors, n_colors), dtype=float)
-
-    # white <-> black
-    A[0, 1] = A[1, 0] = 0
-
-    # line colors <-> white / black
-    A[2:, 0] = bw_contrast
-    A[0, 2:] = bw_contrast
-    A[2:, 1] = bw_contrast
-    A[1, 2:] = bw_contrast
-
-    # line colors <-> line colors
-    A[2:, 2:] = contrast
-    np.fill_diagonal(A, 0)
-    A = A.flatten().astype(str).tolist()
-
-    return A
+    return A.flatten().astype(str).tolist()
