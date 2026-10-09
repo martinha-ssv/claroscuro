@@ -1,11 +1,23 @@
 [project]
-name = "chiaroscuro"
+name = "claroscuro"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
+    "click>=8.3.1",
     "colorspacious>=1.1.2",
     "matplotlib>=3.10.8",
+    "pytest>=9.0.2",
     "requests>=2.32.5",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+pythonpath = ["src"]
+markers = [
+    "unit: fast tests with no external state",
+    "integration: filesystem or matplotlib state involved",
+    "mpl: tests touching matplotlib rcParams or styles",
 ]

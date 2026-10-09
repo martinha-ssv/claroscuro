@@ -1,8 +1,9 @@
 import requests
 import json
 import numpy as np
+from .processing import saturation
 
-def generate_color_palette(n_colors=8, contrast=35, bw_contrast=80, n_results=10, temperature=1.2, mode='transformer'):
+def generate_color_palettes(n_colors=8, contrast=0, bw_contrast=0, n_results=10, temperature=1.2, mode='random'):
     """
     Generate a color palette based on a given base color using an external API.
 
@@ -12,16 +13,14 @@ def generate_color_palette(n_colors=8, contrast=35, bw_contrast=80, n_results=10
     Returns:
         list: A list of colors in the generated palette.
     """
-    adjacency = _adjancency_matrix_bw(n_colors, contrast, bw_contrast)
-    print("Adjacency matrix:", adjacency)
-    print("Adjacency matrix dtype:", type(adjacency))
+    adjacency = _adjancency_matrix(n_colors, contrast, bw_contrast)
 
     json_data = {
         "mode": mode,
         "num_colors": n_colors,
         "temperature": str(temperature),
         "num_results": n_results,
-        "adjacency": adjacency, #["0", "65", "45", "35", "65", "0", "35", "65", "45", "35", "0", "35", "35", "65", "35", "0"],
+        "adjacency": adjacency, 
         "palette": ["-"] * n_colors,
     }
     
@@ -30,8 +29,10 @@ def generate_color_palette(n_colors=8, contrast=35, bw_contrast=80, n_results=10
         json=json_data,
         headers={"Content-Type": "application/json; charset=utf-8"}
     )
+
+    palettes = [sorted(result['palette'], key=saturation, reverse=True) for result in response.json().get('results', [])]
     
-    return dict(response.json())
+    return palettes
 
 
 def _adjancency_matrix(n_colors, contrast, bw_contrast):
@@ -50,6 +51,7 @@ def _adjancency_matrix(n_colors, contrast, bw_contrast):
 
     return A
 
+# unused function, kept for reference
 def _adjancency_matrix_bw(n_colors, contrast, bw_contrast):
     """
     Build Huemint adjacency matrix including black & white

@@ -1,20 +1,13 @@
 import matplotlib.pyplot as plt
 import numpy as np
-
+import Path from pathlib
 import matplotlib.colors as mcolors
 from matplotlib.patches import Rectangle
 import sys
 
-# Get style name from command line argument
-if len(sys.argv) > 1:
-    style_name = sys.argv[1]
-    style_path = f'styles/{style_name}'
-else:
-    style_path = 'custom_dark_bg.mplstyle'
 
 # Fixing random state for reproducibility
 np.random.seed(19680801)
-plt.style.use(style_path)
 
 def plot_scatter(ax, prng, nb_samples=100):
     """Scatter plot."""
@@ -107,8 +100,15 @@ def plot_histograms(ax, prng, nb_samples=10000):
     return ax
 
 
-def plot_figure(style_label=""):
+def plot_figure(style_label="", styles: list =None, style_dir=''):
     """Setup and plot the demonstration figure with a given style."""
+
+    if styles is None:
+        raise ValueError("No style provided")
+    
+    styles = [Path(style_dir) / f"{style_label}.mplstyle" for style in styles]
+    plt.style.use(styles)
+    <
     # Use a dedicated RandomState instance to draw the same "random" values
     # across the different figures.
     prng = np.random.RandomState(96917002)

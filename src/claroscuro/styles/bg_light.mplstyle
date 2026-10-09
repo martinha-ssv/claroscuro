@@ -1,0 +1,8 @@
+# background
+
+figure.facecolor: white
+axes.facecolor: white
+
+
+# axes
+axes.edgecolor: black
