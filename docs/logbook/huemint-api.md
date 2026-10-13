@@ -1,6 +1,6 @@
 # Color Generation
 
-## API Calls
+## 25/12/2025: API Calls
 
 I am using the Huemint API to generate color palettes!
 I started by trying to tweak parameters to get better results.
@@ -15,3 +15,18 @@ Next strategy is to not include black and white in the api call, and then filter
 - post-process to ensure contrast thresholds are met
   - luminance contrast check filter
   - chroma check filter
+
+## 27/12/2025: API Calls v2
+
+I modified the api call to:
+- not include black and white
+- not have a contrast constraint
+- use the random generation mode instead of transformer/diffusion
+
+It's now looking alright! I ended up not implementing the post-processing filters for now, as the results are looking good enough.
+I sorted the colors by saturation, for the cycler to look better (and the default more basic plots, with colors C0, C1 and little else, to look nicer).
+
+I do recognise that we might need to revisit this in the future, as some colors are still quite close to black or white, and we should probably tweak them when they are paired with either black or white backgrounds.
+
+
+

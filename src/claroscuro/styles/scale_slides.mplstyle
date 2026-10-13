@@ -1,0 +1,9 @@
+# text
+
+font.size: 18
+
+
+# figure
+
+figure.figsize: 16, 9
+figure.dpi: 140

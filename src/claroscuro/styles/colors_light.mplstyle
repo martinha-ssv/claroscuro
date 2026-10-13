@@ -1,0 +1,3 @@
+# Claroscuro generated style sheet - light theme
+
+axes.prop_cycle: cycler('color', ['#ef3131', '#49ad46', '#bdc24f', '#049558', '#bbc292', '#a27796', '#a1bea6', '#abb7c8'])
